@@ -7,7 +7,7 @@
 APP_DIR="/apps/wallouf-appdirect-application/"
 
 start() {
-  PID=$(ps -ef | grep -G "wallouf-appdirect-application" | grep -v grep | awk '{print $2}')
+  PID=$(ps -ef | grep -G "Dcatalina.base=/apps/wallouf-appdirect-application/" | grep -v grep | awk '{print $2}')
   if [ -n "$PID" ]; then
     echo "Application already started. Exit."
     exit -1
@@ -25,22 +25,24 @@ start() {
 }
 
 stop() {
-  PID=$(ps -ef | grep -G "wallouf-appdirect-application" | grep -v grep | awk '{print $2}')
+  PID=$(ps -ef | grep -G "Dcatalina.base=/apps/wallouf-appdirect-application/" | grep -v grep | awk '{print $2}')
   if [ -n "$PID" ]; then
     echo "Send SIGTERM signal to stop the application."
     kill $PID
   else
     echo "Application already stopped."
   fi
+  exit 0
 }
 
 status() {
-  PID=$(ps -ef | grep -G "wallouf-appdirect-application" | grep -v grep | awk '{print $2}')
+  PID=$(ps -ef | grep -G "Dcatalina.base=/apps/wallouf-appdirect-application/" | grep -v grep | awk '{print $2}')
   if [ -n "$PID" ]; then
     echo 1
   else
     echo 0
   fi
+  exit 0
 }
 
 case "$1" in
