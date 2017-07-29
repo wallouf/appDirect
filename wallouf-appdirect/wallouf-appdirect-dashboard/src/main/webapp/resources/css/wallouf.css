@@ -1,0 +1,33 @@
+#particle-ground-container {
+    height: 350px;
+    background-color: #fafafa;
+    position: relative;
+    border: solid #ddd 0px;
+    border-bottom-width: 1px;
+}
+
+#particle-ground-container-title {
+    width: 100%;
+    position: absolute;
+    top: calc(50% - 40px);
+    text-align: center;
+    color: #4A7BCC;
+    font-size: 48px;
+    font-weight: 600;
+}
+
+#particle-ground-container-sub-title {
+    width: 100%;
+    position: absolute;
+    top: calc(50% + 15px);
+    text-align: center;
+    color: #4A7BCC;
+    font-size: 24px;
+}
+
+#navbar-bottom {
+    background-color: #fff;
+    padding: 15px 0;
+    border: solid #ccc 0px;
+    border-top-width: 1px;
+}

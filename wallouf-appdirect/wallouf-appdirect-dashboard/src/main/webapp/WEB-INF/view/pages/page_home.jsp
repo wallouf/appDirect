@@ -16,7 +16,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>AppDirect</title>
-        <script src="<c:url value="/resources/js/particleground/particleground.js" />"></script>
 
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -31,6 +30,10 @@
             <div id="particle-ground-container" class="row">
                 <p id="particle-ground-container-title">AppDirect</p>
                 <p id="particle-ground-container-sub-title">One app at the time...</p>
+            </div>
+            <br/>
+            <div class="jumbotron">
+                <h3>Hello, world!</h3>
             </div>
             <c:import url="/WEB-INF/view/modules/module_footer.jsp" />
         </div>

@@ -13,7 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>3.2.0.RELEASE</spring.version>
+        <spring.version>4.3.9.RELEASE</spring.version>
         <commons-io.version>2.4</commons-io.version>
     </properties>
 
@@ -55,13 +55,6 @@
 	            <groupId>com.sun.jersey</groupId>
 	            <artifactId>jersey-json</artifactId>
 	            <version>1.8</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>org.jboss.spec</groupId>
-	            <artifactId>jboss-javaee-6.0</artifactId>
-	            <version>1.0.0.Final</version>
-	            <type>pom</type>
-	            <scope>provided</scope>
 	        </dependency>
 	        <!--LOGGER-->
 	        <dependency>
