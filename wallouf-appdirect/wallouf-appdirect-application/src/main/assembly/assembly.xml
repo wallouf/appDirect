@@ -41,5 +41,12 @@
             <fileMode>755</fileMode>
             <directoryMode>755</directoryMode>
         </fileSet>
+        <!--PROJECTS-->
+        <fileSet>
+            <directory>target/dependency/wallouf-appdirect-dashboard/webapps/wallouf-appdirect-dashboard/</directory>
+            <outputDirectory>wallouf-appdirect-application/webapps/ROOT/</outputDirectory>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
     </fileSets>
 </assembly>

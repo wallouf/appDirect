@@ -14,9 +14,9 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>wallouf-appdirect-dashboard</artifactId>
+            <version>${project.version}</version>
             <classifier>fullpackage</classifier>
             <type>tar.gz</type>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

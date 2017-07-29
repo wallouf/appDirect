@@ -2,7 +2,7 @@
 # chkconfig: 45 20 80
 
 # Source function library.
-. /etc/init.d/functions
+. /etc/init.d/functions > /dev/null 2>&1
 
 APP_DIR="/apps/wallouf-appdirect-application/"
 
