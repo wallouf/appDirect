@@ -1,0 +1,45 @@
+<assembly>
+    <id>fullpackage</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/assembly/conf</directory>
+            <outputDirectory>wallouf-appdirect-application/conf/</outputDirectory>
+            <includes />
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/assembly/logs</directory>
+            <outputDirectory>wallouf-appdirect-application/logs/</outputDirectory>
+            <includes />
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/assembly/temp</directory>
+            <outputDirectory>wallouf-appdirect-application/temp/</outputDirectory>
+            <includes />
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/assembly/work</directory>
+            <outputDirectory>wallouf-appdirect-application/work/</outputDirectory>
+            <includes />
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+        <!--SCRIPT-->
+        <fileSet>
+            <directory>src/main/assembly/script</directory>
+            <outputDirectory>wallouf-appdirect-application/</outputDirectory>
+            <includes />
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+    </fileSets>
+</assembly>

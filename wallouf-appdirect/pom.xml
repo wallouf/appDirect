@@ -8,7 +8,7 @@
     
     <modules>
 	    <module>wallouf-appdirect-dashboard</module>
-	    <!-- <artifactId>wallouf-appdirect-application</artifactId> -->
+	    <module>wallouf-appdirect-application</module>
     </modules>
 
     <properties>
