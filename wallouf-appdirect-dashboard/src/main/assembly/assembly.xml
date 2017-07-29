@@ -1,0 +1,27 @@
+<assembly>
+    <id>fullpackage</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>target/wallouf-appdirect-dashboard-${project.version}/WEB-INF/properties/</directory>
+            <outputDirectory>wallouf-appdirect-dashboard/webapps/wallouf-appdirect-dashboard/WEB-INF/classes/</outputDirectory>
+            <includes>
+                <include>log4j.xml</include>
+            </includes>
+            <fileMode>755</fileMode>
+            <directoryMode>755</directoryMode>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>wallouf-appdirect-dashboard/webapps/wallouf-appdirect-dashboard/</outputDirectory>
+            <includes>
+                <include>${artifact}</include>
+            </includes>
+            <unpack>true</unpack>
+        </dependencySet>
+    </dependencySets>
+</assembly>
