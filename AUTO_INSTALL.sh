@@ -278,8 +278,10 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 	fi
 
 	varNameTag=${var_imageName}-$(date +%s)
+	rm ec2_creation.log  > /dev/null 2>&1
 
-	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${var_sshKeyName} --security-group-ids ${var_securityGroupId} --subnet-id ${var_subnetId} --tags Key=Name,Value=${varNameTag} > ec2_creation.log
+	#CREATE INSTANCE
+	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${var_sshKeyName} --security-group-ids ${var_securityGroupId} --subnet-id ${var_subnetId} > ec2_creation.log
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Creation of EC2 failed. Please try again.${resetEchoStyle}"
 	    exit -1
@@ -292,6 +294,9 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 	    echo "${boldRedEchoStyle}        Cannot get id of EC2 instance. Please terminate it manually and try again.${resetEchoStyle}"
 		exit -1
 	fi
+	#ADD TAG
+	aws ec2 create-tags --resources ${var_instanceId} --tags Key=Name,Value=${varNameTag}
+
 	#RETRIEVE PUBLIC IP
 	var_try=0
 	var_instanceIP=$(aws ec2 describe-instances --instance-ids ${var_instanceId} --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
