@@ -19,6 +19,7 @@ var_computeType="t2.micro"
 var_instanceId=""
 var_stepChoice=0
 var_interactionChoice=1
+varResult=""
 
 function print_usage() {
 	clear
@@ -49,7 +50,7 @@ function print_usage() {
     echo
     echo "  -h,--help					Show this help message and exit."
     echo
-    echo "  -a,--no-interaction			Do not ask confirmation."
+    echo "  -a,--no-confirmation		Do not ask confirmation."
     echo
     echo "  -b,--build-maven-only		Build only with maven the application."
     echo
@@ -69,9 +70,7 @@ function stopAWS_EC2(){
 	aws ec2 terminate-instances --instance-ids ${var_instanceId}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Termination of EC2 ${var_instanceId} failed.${resetEchoStyle}"
-	    return -1
-	else
-		return 0
+	    varResult="-1"
 	fi
 }
 
@@ -79,7 +78,7 @@ print_usage
 
 while :; do
     case $1 in
-        -a|--no-interaction)
+        -a|--no-confirmation)
             var_interactionChoice=0
             ;;
         -b|--build-maven-only)
@@ -217,6 +216,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 3 ]] || [[ ${var_st
     echo "${boldOrangeEchoStyle}	-> Step 3: Push with docker...${resetEchoStyle}"
     echo
 
+    echo "			Connection to Docker Hub${resetEchoStyle}"
     sudo docker login -u ${var_dockerIdUser}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Cannot log to docker service. Please fix docker and try again.${resetEchoStyle}"
@@ -326,8 +326,8 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	done
 
 	if [ ! "${var_instanceIP}" ]; then
-		varResult=$(stopAWS_EC2)
-		if [ $varResult -eq 0 ]; then
+		stopAWS_EC2
+		if [ ! $varResult ]; then
 		    echo "${boldRedEchoStyle}        Cannot get public ip of EC2 instance. Please try again.${resetEchoStyle}"
 		else
 		    echo "${boldRedEchoStyle}        Cannot get public ip of EC2 instance. Termination of instance failed. Please close it manually and try again.${resetEchoStyle}"
@@ -356,8 +356,8 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	done
 
 	if [[ "${var_sshResult}" == "FALSE" ]]; then
-		varResult=$(stopAWS_EC2)
-		if [ $varResult -eq 0 ]; then
+		stopAWS_EC2
+		if [ ! $varResult ]; then
 		    echo "${boldRedEchoStyle}        Connection to EC2 failed. Please try again.${resetEchoStyle}"
 		else
 		    echo "${boldRedEchoStyle}        Connection to EC2 failed. Termination of instance failed. Please close it manually and try again.${resetEchoStyle}"
@@ -368,8 +368,8 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
     echo "			Install docker${resetEchoStyle}"
 	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo yum install -y docker
 	if [ $? -ne 0 ]; then
-		varResult=$(stopAWS_EC2)
-		if [ $varResult -eq 0 ]; then
+		stopAWS_EC2
+		if [ ! $varResult ]; then
 		    echo "${boldRedEchoStyle}        Docker installation failed. Please try again.${resetEchoStyle}"
 		else
 		    echo "${boldRedEchoStyle}        Docker installation failed. Termination of instance failed. Please close it manually and try again.${resetEchoStyle}"
@@ -380,8 +380,8 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
     echo "			Start docker service${resetEchoStyle}"
 	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo service docker start
 	if [ $? -ne 0 ]; then
-		varResult=$(stopAWS_EC2)
-		if [ $varResult -eq 0 ]; then
+		stopAWS_EC2
+		if [ ! $varResult ]; then
 		    echo "${boldRedEchoStyle}        Docker failed to start. Please try again.${resetEchoStyle}"
 		else
 		    echo "${boldRedEchoStyle}        Docker failed to start. Termination of instance failed. Please close it manually and try again.${resetEchoStyle}"
@@ -392,8 +392,8 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
     echo "			Run application in docker${resetEchoStyle}"
     ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo docker run -d -p 80:80 ${var_dockerIdUser}/${var_imageName}
     if [ $? -ne 0 ]; then
-		varResult=$(stopAWS_EC2)
-		if [ $varResult -eq 0 ]; then
+		stopAWS_EC2
+		if [ ! $varResult ]; then
 		    echo "${boldRedEchoStyle}        Application failed to start. Please try again.${resetEchoStyle}"
 		else
 		    echo "${boldRedEchoStyle}        Application failed to start. Termination of instance failed. Please close it manually and try again.${resetEchoStyle}"
