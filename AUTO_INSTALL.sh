@@ -156,6 +156,7 @@ echo
 if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 1 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 1: Build with maven...${resetEchoStyle}"
+    echo
 	#CHECK MAVEN
 	mvn --version > install.log 2>&1
 	if [ $? -ne 0 ]; then
@@ -185,6 +186,7 @@ fi
 if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 2 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 2: Build with docker...${resetEchoStyle}"
+    echo
 
     sudo service docker start
 	if [ $? -ne 0 ]; then
@@ -206,6 +208,7 @@ fi
 if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 3 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 3: Push with docker...${resetEchoStyle}"
+    echo
 
     sudo docker login -u ${var_dockerIdUser}
 	if [ $? -ne 0 ]; then
@@ -232,6 +235,7 @@ fi
 if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 4 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 4: Install locally...${resetEchoStyle}"
+    echo
 
     sudo service docker start
 	if [ $? -ne 0 ]; then
@@ -253,8 +257,10 @@ fi
 if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step Cloud: Install with AWS...${resetEchoStyle}"
+    echo
 
     #INSTALL AWS CLI
+    echo "			Install AWS CLI${resetEchoStyle}"
     pip install awscli --upgrade --user
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Installation of AWS CLI failed. Please try again.${resetEchoStyle}"
@@ -271,6 +277,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 	    exit -1
 	fi
 
+    echo "			Configure AWS CLI${resetEchoStyle}"
 	aws configure
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Configuration of AWS CLI failed. Please try again.${resetEchoStyle}"
@@ -281,6 +288,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 	rm ec2_creation.log  > /dev/null 2>&1
 
 	#CREATE INSTANCE
+    echo "			Create EC2 in AWS${resetEchoStyle}"
 	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${var_sshKeyName} --security-group-ids ${var_securityGroupId} --subnet-id ${var_subnetId} > ec2_creation.log
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Creation of EC2 failed. Please try again.${resetEchoStyle}"
@@ -295,9 +303,11 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 		exit -1
 	fi
 	#ADD TAG
+    echo "			Add tag to EC2 in AWS${resetEchoStyle}"
 	aws ec2 create-tags --resources ${var_instanceId} --tags Key=Name,Value=${varNameTag}
 
 	#RETRIEVE PUBLIC IP
+    echo "			Retrieve EC2 public IP${resetEchoStyle}"
 	var_try=0
 	var_instanceIP=$(aws ec2 describe-instances --instance-ids ${var_instanceId} --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
 
@@ -309,7 +319,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 	done
 
 	if [ ! "${var_instanceIP}" ]; then
-		varResult=stopAWS_EC2
+		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
 		    echo "${boldRedEchoStyle}        Cannot get public ip of EC2 instance. Please try again.${resetEchoStyle}"
 		else
@@ -318,11 +328,28 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 		exit -1
 	fi
 
+    echo "			Change right of PEM key${resetEchoStyle}"
 	chmod 600 ${var_sshKeyName}.pem
 
-	ssh -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP}
-	if [ $? -ne 0 ]; then
-		varResult=stopAWS_EC2
+    echo "			Trying to connect to ec2 instance${resetEchoStyle}"
+	var_try=0
+	var_sshResult="FALSE"
+	while [ ${var_try} -lt 5 ] && [[ "${var_sshResult}" == "FALSE" ]]
+	do
+	   var_try=$((var_try+1))
+	   ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} date
+		if [ $? -ne 0 ]; then
+    		echo "			Connection fail. Continue...${resetEchoStyle}"
+		else
+    		echo "			Connection successful. Continue...${resetEchoStyle}"
+			var_sshResult="TRUE"
+			break
+		fi
+	   sleep 5
+	done
+
+	if [[ "${var_sshResult}" == "FALSE" ]]; then
+		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
 		    echo "${boldRedEchoStyle}        Connection to EC2 failed. Please try again.${resetEchoStyle}"
 		else
@@ -331,9 +358,10 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 		exit -1
 	fi
 
-	sudo yum install -y docker
+    echo "			Install docker${resetEchoStyle}"
+	ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} sudo yum install -y docker
 	if [ $? -ne 0 ]; then
-		varResult=stopAWS_EC2
+		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
 		    echo "${boldRedEchoStyle}        Docker installation failed. Please try again.${resetEchoStyle}"
 		else
@@ -342,9 +370,10 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 		exit -1
 	fi
 
-	sudo service docker start
+    echo "			Start docker service${resetEchoStyle}"
+	ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} sudo service docker start
 	if [ $? -ne 0 ]; then
-		varResult=stopAWS_EC2
+		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
 		    echo "${boldRedEchoStyle}        Docker failed to start. Please try again.${resetEchoStyle}"
 		else
@@ -353,9 +382,10 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 		exit -1
 	fi
 
-    sudo docker run -d -p 80:80 ${var_dockerIdUser}/${var_imageName}
+    echo "			Run application in docker${resetEchoStyle}"
+    ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} sudo docker run -d -p 80:80 ${var_dockerIdUser}/${var_imageName}
     if [ $? -ne 0 ]; then
-		varResult=stopAWS_EC2
+		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
 		    echo "${boldRedEchoStyle}        Application failed to start. Please try again.${resetEchoStyle}"
 		else
@@ -363,7 +393,6 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
 		fi
 		exit -1
 	fi
-
 
     echo "${boldGreenEchoStyle}	-> Step Cloud: Install with AWS DONE! You can try your new application at the following url http://${var_instanceIP}${resetEchoStyle}"
 fi
