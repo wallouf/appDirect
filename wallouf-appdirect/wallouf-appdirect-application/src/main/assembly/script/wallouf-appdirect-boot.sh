@@ -19,7 +19,7 @@ start() {
   CATALINA_BASE=${APP_DIR}
   export JAVA_HOME JAVA_OPTS CATALINA_HOME CATALINA_BASE
 
-  nohup ${CATALINA_HOME}/bin/catalina.sh start &> stdout.log &
+  ${CATALINA_HOME}/bin/catalina.sh run &> stdout.log &
   echo "Application successfully started!"
   exit 0
 }

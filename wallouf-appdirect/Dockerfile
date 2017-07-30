@@ -16,5 +16,7 @@ RUN tar -zxvf /apps/*.tar.gz
 
 RUN rm /apps/*.tar.gz
 
-CMD ["/apps/wallouf-appdirect-application/wallouf-appdirect-boot.sh","start"]
+RUN chmod -R 755 /apps/wallouf-appdirect-application/
+
+CMD /apps/wallouf-appdirect-application/wallouf-appdirect-boot.sh start
 
