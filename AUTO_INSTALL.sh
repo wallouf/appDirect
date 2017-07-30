@@ -12,7 +12,7 @@ DOCKER_USER_ID=""
 FILE_SSH_KEY_NAME=""
 AWS_SSH_KEY_NAME=""
 AWS_SUBNET_ID=""
-AWS_SECURITY-GROUP_ID=""
+AWS_SECURITYGROUP_ID=""
 
 #DO NOT CHANGE
 var_computeType="t2.micro"
@@ -38,8 +38,8 @@ function read_properties(){
 				AWS_SSH_KEY_NAME="${value}"
 			elif [[ "$key" == "AWS_SUBNET_ID" ]]; then
 				AWS_SUBNET_ID="${value}"
-			elif [[ "$key" == "AWS_SECURITY" ]]; then
-				AWS_SECURITY="${value}"
+			elif [[ "$key" == "AWS_SECURITYGROUP_ID" ]]; then
+				AWS_SECURITYGROUP_ID="${value}"
 			fi
 		done < "$file"
 	else
@@ -48,7 +48,7 @@ function read_properties(){
 	    echo
 		exit -1
 	fi
-	if [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ]; then
+	if [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_USER_ID} ] || [ ! ${FILE_SSH_KEY_NAME} ] || [ ! ${AWS_SSH_KEY_NAME} ] || [ ! ${AWS_SUBNET_ID} ] || [ ! ${AWS_SECURITYGROUP_ID} ]; then
 		echo
 	    echo "${boldRedEchoStyle}        Missing properties in $file file. Fix it and try again.${resetEchoStyle}"
 	    echo
@@ -337,7 +337,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 
 	#CREATE INSTANCE
     echo "			Create EC2 in AWS${resetEchoStyle}"
-	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${SSH_KEY_NAME} --security-group-ids ${AWS_SECURITY-GROUP_ID} --subnet-id ${AWS_SUBNET_ID} > ec2_creation.log
+	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${AWS_SSH_KEY_NAME} --security-group-ids ${AWS_SECURITYGROUP_ID} --subnet-id ${AWS_SUBNET_ID} > ec2_creation.log
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Creation of EC2 failed. Please try again.${resetEchoStyle}"
 	    exit -1
