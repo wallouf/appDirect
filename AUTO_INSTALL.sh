@@ -5,19 +5,20 @@ SCRIPT_NAME=`basename $0`
 SCRIPT_PATH=`pwd`
 popd > /dev/null
 
-var_stepChoice=0
-var_interactionChoice=1
+#DOCKER PARAMS
 var_imageName="wallouf-appdirect-application"
 var_dockerIdUser="wallouf"
 #AWS PARAMS
 var_amiId="ami-a7aa15c3"
-var_computeType="t2.micro"
 var_sshKeyName="BOC-SSH-KEY"
 var_subnetId="subnet-4434c13f"
 var_securityGroupId="sg-7688df1f"
+var_computeType="t2.micro"
 
 #DO NOT CHANGE
 var_instanceId=""
+var_stepChoice=0
+var_interactionChoice=1
 
 function print_usage() {
 	clear
