@@ -191,7 +191,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 4 ]]; then
 	    exit -1
 	fi
 
-    sudo docker run -d -p 8080:8080 --name ${var_imageName} ${var_imageName}
+    sudo docker run -d -p 8080:8080 ${var_imageName}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Deployment failed with docker. Please fix project and try again.${resetEchoStyle}"
 	    exit -1
