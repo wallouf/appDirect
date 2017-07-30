@@ -6,20 +6,55 @@ SCRIPT_PATH=`pwd`
 popd > /dev/null
 
 #DOCKER PARAMS
-var_imageName="wallouf-appdirect-application"
-var_dockerIdUser="wallouf"
+DOCKER_IMAGE_ID=""
+DOCKER_USER_ID=""
 #AWS PARAMS
-var_amiId="ami-a7aa15c3"
-var_sshKeyName="BOC-SSH-KEY"
-var_subnetId="subnet-4434c13f"
-var_securityGroupId="sg-7688df1f"
-var_computeType="t2.micro"
+FILE_SSH_KEY_NAME=""
+AWS_SSH_KEY_NAME=""
+AWS_SUBNET_ID=""
+AWS_SECURITY-GROUP_ID=""
 
 #DO NOT CHANGE
+var_computeType="t2.micro"
+var_amiId="ami-a7aa15c3"
 var_instanceId=""
 var_stepChoice=0
 var_interactionChoice=1
 varResult=""
+
+function read_properties(){
+	file="./CONFIGURATION.properties"
+
+	if [ -f "$file" ]; then
+		while IFS='=' read -r key value
+		do
+			if[[ "$key" == "DOCKER_IMAGE_ID" ]]; then
+				DOCKER_IMAGE_ID="${value}"
+			elif[[ "$key" == "DOCKER_USER_ID" ]]; then
+				DOCKER_USER_ID="${value}"
+			elif[[ "$key" == "FILE_SSH_KEY_NAME" ]]; then
+				FILE_SSH_KEY_NAME="${value}"
+			elif[[ "$key" == "AWS_SSH_KEY_NAME" ]]; then
+				AWS_SSH_KEY_NAME="${value}"
+			elif[[ "$key" == "AWS_SUBNET_ID" ]]; then
+				AWS_SUBNET_ID="${value}"
+			elif[[ "$key" == "AWS_SECURITY" ]]; then
+				AWS_SECURITY="${value}"
+			fi
+		done < "$file"
+	else
+		echo
+	    echo "${boldRedEchoStyle}        $file file not found. Fix it and try again.${resetEchoStyle}"
+	    echo
+		exit -1
+	fi
+	if [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ] || [ ! ${DOCKER_IMAGE_ID} ]; then
+		echo
+	    echo "${boldRedEchoStyle}        Missing properties in $file file. Fix it and try again.${resetEchoStyle}"
+	    echo
+		exit -1
+	fi
+}
 
 function print_usage() {
 	clear
@@ -30,7 +65,7 @@ function print_usage() {
 	echo "	WARNING:"
 	echo "		- You need to have python > 2.7 at least to deploy"
 	echo "		- You need to have apache maven > 3.5 and java 1.8 at least to build"
-	echo "		- You need a docker account and a docker repository with the following name: ${var_imageName}"
+	echo "		- You need a docker account and a docker repository with the following name: ${DOCKER_IMAGE_ID}"
 	echo "		- Before using this script, you need to set up your credentials into the CREDENTIALS.properties file."
 	echo 
 	echo "	STEPS:"
@@ -155,6 +190,12 @@ if [[ ${var_interactionChoice} -eq 1 ]]; then
 fi
 
 echo
+echo "${boldOrangeEchoStyle}Read properties file...${resetEchoStyle}"
+echo
+
+read_properties
+
+echo
 echo "${boldOrangeEchoStyle}Launch auto installation...${resetEchoStyle}"
 echo
 
@@ -200,7 +241,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 2 ]] || [[ ${var_st
 	    exit -1
 	fi
 
-    sudo docker build -t ${var_imageName} ${SCRIPT_PATH}/wallouf-appdirect/
+    sudo docker build -t ${DOCKER_IMAGE_ID} ${SCRIPT_PATH}/wallouf-appdirect/
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Build failed with docker. Please fix project and try again.${resetEchoStyle}"
 	    exit -1
@@ -217,19 +258,19 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 3 ]] || [[ ${var_st
     echo
 
     echo "			Connection to Docker Hub${resetEchoStyle}"
-    sudo docker login -u ${var_dockerIdUser}
+    sudo docker login -u ${DOCKER_USER_ID}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Cannot log to docker service. Please fix docker and try again.${resetEchoStyle}"
 	    exit -1
 	fi
 
-    sudo docker tag ${var_imageName} ${var_dockerIdUser}/${var_imageName}
+    sudo docker tag ${DOCKER_IMAGE_ID} ${DOCKER_USER_ID}/${DOCKER_IMAGE_ID}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Cannot tag image with docker. Please fix docker and try again.${resetEchoStyle}"
 	    exit -1
 	fi
 
-    sudo docker push ${var_dockerIdUser}/${var_imageName}
+    sudo docker push ${DOCKER_USER_ID}/${DOCKER_IMAGE_ID}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Cannot push image to docker. Please fix docker and try again.${resetEchoStyle}"
 	    exit -1
@@ -250,7 +291,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 4 ]]; then
 	    exit -1
 	fi
 
-    sudo docker run -d -p 80:80 ${var_imageName}
+    sudo docker run -d -p 80:80 ${DOCKER_IMAGE_ID}
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Deployment failed with docker. Please fix project and try again.${resetEchoStyle}"
 	    exit -1
@@ -291,12 +332,12 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	    exit -1
 	fi
 
-	varNameTag=${var_imageName}-$(date +%s)
+	varNameTag=${DOCKER_IMAGE_ID}-$(date +%s)
 	rm ec2_creation.log  > /dev/null 2>&1
 
 	#CREATE INSTANCE
     echo "			Create EC2 in AWS${resetEchoStyle}"
-	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${var_sshKeyName} --security-group-ids ${var_securityGroupId} --subnet-id ${var_subnetId} > ec2_creation.log
+	aws ec2 run-instances --image-id ${var_amiId} --count 1 --instance-type ${var_computeType} --key-name ${SSH_KEY_NAME} --security-group-ids ${AWS_SECURITY-GROUP_ID} --subnet-id ${AWS_SUBNET_ID} > ec2_creation.log
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Creation of EC2 failed. Please try again.${resetEchoStyle}"
 	    exit -1
@@ -336,7 +377,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Change right of PEM key${resetEchoStyle}"
-	chmod 600 ${SCRIPT_PATH}/${var_sshKeyName}.pem
+	chmod 600 ${SCRIPT_PATH}/${FILE_SSH_KEY_NAME}
 
     echo "			Trying to connect to ec2 instance${resetEchoStyle}"
 	var_try=0
@@ -344,7 +385,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	while [ ${var_try} -lt 5 ] && [[ "${var_sshResult}" == "FALSE" ]]
 	do
 	   var_try=$((var_try+1))
-	   ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} date
+	   ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${FILE_SSH_KEY_NAME}" ec2-user@${var_instanceIP} date
 		if [ $? -ne 0 ]; then
     		echo "				Connection fail. Continue...${resetEchoStyle}"
 		else
@@ -366,7 +407,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Install docker${resetEchoStyle}"
-	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo yum install -y docker
+	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${FILE_SSH_KEY_NAME}" ec2-user@${var_instanceIP} sudo yum install -y docker
 	if [ $? -ne 0 ]; then
 		stopAWS_EC2
 		if [ ! $varResult ]; then
@@ -378,7 +419,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Start docker service${resetEchoStyle}"
-	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo service docker start
+	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${FILE_SSH_KEY_NAME}" ec2-user@${var_instanceIP} sudo service docker start
 	if [ $? -ne 0 ]; then
 		stopAWS_EC2
 		if [ ! $varResult ]; then
@@ -390,7 +431,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Run application in docker${resetEchoStyle}"
-    ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo docker run -d -p 80:80 ${var_dockerIdUser}/${var_imageName}
+    ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${FILE_SSH_KEY_NAME}" ec2-user@${var_instanceIP} sudo docker run -d -p 80:80 ${DOCKER_USER_ID}/${DOCKER_IMAGE_ID}
     if [ $? -ne 0 ]; then
 		stopAWS_EC2
 		if [ ! $varResult ]; then
