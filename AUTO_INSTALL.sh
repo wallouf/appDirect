@@ -346,9 +346,9 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	   var_try=$((var_try+1))
 	   ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} date
 		if [ $? -ne 0 ]; then
-    		echo "			Connection fail. Continue...${resetEchoStyle}"
+    		echo "				Connection fail. Continue...${resetEchoStyle}"
 		else
-    		echo "			Connection successful. Continue...${resetEchoStyle}"
+    		echo "				Connection successful. Continue...${resetEchoStyle}"
 			var_sshResult="TRUE"
 			break
 		fi
