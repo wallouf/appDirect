@@ -8,6 +8,7 @@ popd > /dev/null
 var_stepChoice=0
 var_interactionChoice=1
 var_imageName="wallouf-appdirect-application"
+var_dockerIdUser="wallouf"
 
 function print_usage() {
 	clear
@@ -17,6 +18,7 @@ function print_usage() {
 	echo 
 	echo "	WARNING:"
 	echo "		- You need to have apache maven > 3.5 and java 1.8 at least to build"
+	echo "		- You need a docker account and a docker repository with the following name: ${var_imageName}"
 	echo "		- Before using this script, you need to set up your credentials into the CREDENTIALS.properties file."
 	echo 
 	echo "	STEPS:"
@@ -176,6 +178,24 @@ fi
 if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 3 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 3: Push with docker...${resetEchoStyle}"
+
+    sudo docker login -u ${var_dockerIdUser}
+	if [ $? -ne 0 ]; then
+	    echo "${boldRedEchoStyle}        Cannot log to docker service. Please fix docker and try again.${resetEchoStyle}"
+	    exit -1
+	fi
+
+    sudo docker tag ${var_imageName} ${var_dockerIdUser}/${var_imageName}
+	if [ $? -ne 0 ]; then
+	    echo "${boldRedEchoStyle}        Cannot tag image with docker. Please fix docker and try again.${resetEchoStyle}"
+	    exit -1
+	fi
+
+    sudo docker push ${var_dockerIdUser}/${var_imageName}
+	if [ $? -ne 0 ]; then
+	    echo "${boldRedEchoStyle}        Cannot push image to docker. Please fix docker and try again.${resetEchoStyle}"
+	    exit -1
+	fi
     echo "${boldGreenEchoStyle}	-> Step 3: Push with docker DONE!${resetEchoStyle}"
 fi
 
