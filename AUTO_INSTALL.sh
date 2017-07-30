@@ -28,17 +28,17 @@ function read_properties(){
 	if [ -f "$file" ]; then
 		while IFS='=' read -r key value
 		do
-			if[[ "$key" == "DOCKER_IMAGE_ID" ]]; then
+			if [[ "$key" == "DOCKER_IMAGE_ID" ]]; then
 				DOCKER_IMAGE_ID="${value}"
-			elif[[ "$key" == "DOCKER_USER_ID" ]]; then
+			elif [[ "$key" == "DOCKER_USER_ID" ]]; then
 				DOCKER_USER_ID="${value}"
-			elif[[ "$key" == "FILE_SSH_KEY_NAME" ]]; then
+			elif [[ "$key" == "FILE_SSH_KEY_NAME" ]]; then
 				FILE_SSH_KEY_NAME="${value}"
-			elif[[ "$key" == "AWS_SSH_KEY_NAME" ]]; then
+			elif [[ "$key" == "AWS_SSH_KEY_NAME" ]]; then
 				AWS_SSH_KEY_NAME="${value}"
-			elif[[ "$key" == "AWS_SUBNET_ID" ]]; then
+			elif [[ "$key" == "AWS_SUBNET_ID" ]]; then
 				AWS_SUBNET_ID="${value}"
-			elif[[ "$key" == "AWS_SECURITY" ]]; then
+			elif [[ "$key" == "AWS_SECURITY" ]]; then
 				AWS_SECURITY="${value}"
 			fi
 		done < "$file"
