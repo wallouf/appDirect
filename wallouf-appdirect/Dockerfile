@@ -4,7 +4,7 @@ RUN mkdir /apps
 
 WORKDIR /apps/
 
-EXPOSE 8080
+EXPOSE 80
 
 RUN ln -s /usr/local/tomcat/ /apps/tomcat
 
