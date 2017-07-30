@@ -60,6 +60,8 @@ function print_usage() {
     echo
     echo "  -c,--cloud-only				Install only with AWS the application image."
     echo
+    echo "  -cf,--cloud-full			All steps and deploy to cloud with AWS the application image."
+    echo
 }
 
 function stopAWS_EC2(){
@@ -97,6 +99,10 @@ while :; do
             ;;
         -c|--cloud-only)
             var_stepChoice=5
+            var_interactionChoice=0
+            ;;
+        -cf|--cloud-full)
+            var_stepChoice=6
             var_interactionChoice=0
             ;;
 
@@ -153,7 +159,7 @@ echo "${boldOrangeEchoStyle}Launch auto installation...${resetEchoStyle}"
 echo
 
 #STEP 1
-if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 1 ]]; then
+if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 1 ]] || [[ ${var_stepChoice} -eq 6 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 1: Build with maven...${resetEchoStyle}"
     echo
@@ -183,7 +189,7 @@ fi
 
 
 #STEP 2
-if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 2 ]]; then
+if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 2 ]] || [[ ${var_stepChoice} -eq 6 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 2: Build with docker...${resetEchoStyle}"
     echo
@@ -205,7 +211,7 @@ fi
 
 
 #STEP 3
-if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 3 ]]; then
+if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 3 ]] || [[ ${var_stepChoice} -eq 6 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step 3: Push with docker...${resetEchoStyle}"
     echo
@@ -254,7 +260,7 @@ fi
 
 
 #STEP 5 - CLOUD
-if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]]; then
+if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_stepChoice} -eq 6 ]]; then
 	echo
     echo "${boldOrangeEchoStyle}	-> Step Cloud: Install with AWS...${resetEchoStyle}"
     echo
