@@ -336,7 +336,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Change right of PEM key${resetEchoStyle}"
-	chmod 600 ${var_sshKeyName}.pem
+	chmod 600 ${SCRIPT_PATH}/${var_sshKeyName}.pem
 
     echo "			Trying to connect to ec2 instance${resetEchoStyle}"
 	var_try=0
@@ -344,7 +344,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	while [ ${var_try} -lt 5 ] && [[ "${var_sshResult}" == "FALSE" ]]
 	do
 	   var_try=$((var_try+1))
-	   ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} date
+	   ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} date
 		if [ $? -ne 0 ]; then
     		echo "			Connection fail. Continue...${resetEchoStyle}"
 		else
@@ -366,7 +366,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Install docker${resetEchoStyle}"
-	ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} sudo yum install -y docker
+	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo yum install -y docker
 	if [ $? -ne 0 ]; then
 		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
@@ -378,7 +378,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Start docker service${resetEchoStyle}"
-	ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} sudo service docker start
+	ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo service docker start
 	if [ $? -ne 0 ]; then
 		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
@@ -390,7 +390,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 	fi
 
     echo "			Run application in docker${resetEchoStyle}"
-    ssh -oStrictHostKeyChecking=no -i ${var_sshKeyName}.pem ec2-user@${var_instanceIP} sudo docker run -d -p 80:80 ${var_dockerIdUser}/${var_imageName}
+    ssh -oStrictHostKeyChecking=no -i "${SCRIPT_PATH}/${var_sshKeyName}.pem" ec2-user@${var_instanceIP} sudo docker run -d -p 80:80 ${var_dockerIdUser}/${var_imageName}
     if [ $? -ne 0 ]; then
 		varResult=$(stopAWS_EC2)
 		if [ $varResult -eq 0 ]; then
