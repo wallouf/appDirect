@@ -309,7 +309,7 @@ if [[ ${var_stepChoice} -eq 0 ]] || [[ ${var_stepChoice} -eq 5 ]] || [[ ${var_st
 
     #INSTALL AWS CLI
     echo "			Install AWS CLI${resetEchoStyle}"
-    sudo pip install awscli --upgrade --user
+    pip install awscli --upgrade --user
 	if [ $? -ne 0 ]; then
 	    echo "${boldRedEchoStyle}        Installation of AWS CLI failed. Please try again.${resetEchoStyle}"
 	    exit -1
