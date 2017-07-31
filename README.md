@@ -48,6 +48,7 @@ AppDirect bootstrap webapp automated docker & AWS project:
 	1.	**AWS_SECURITYGROUP_ID** : id of the security group in AWS. Like sg-xxxxxxxx
 	1.	**DOCKER_IMAGE_ID** : Docker image name **AND docker repository name**.
 	1.	**DOCKER_USER_ID** : Username of your docker account
+1.	Change the rights of the script AUTO_INSTALL.sh to be executable ( chmod +x AUTO_INSTALL.sh )
 1.	Run the AUTO_INSTALL.sh script within a console:
 	1.	Use **"./AUTO_INSTALL.sh -cf"** for a full flow and deploy in **AWS Cloud**
 	1.	Use **"./AUTO_INSTALL.sh"** for a full flow  and deploy in your computer
