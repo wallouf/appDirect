@@ -42,14 +42,14 @@ AppDirect bootstrap webapp automated docker & AWS project:
 1.	Clone this repository
 1.	Download your SSH key into the project root folder where the script AUTO_INSTALL.sh is
 1.	Edit the CONFIGURATION.properties file to set up your values:
-	1.	FILE_SSH_KEY_NAME : File name of your AWS SSH key on your disk.
-	1.	AWS_SSH_KEY_NAME : Name of your AWS SSH key.
-	1.	AWS_SUBNET_ID : Id of the subnet in AWS. Like subnet-xxxxxxxx
-	1.	AWS_SECURITYGROUP_ID : id of the security group in AWS. Like sg-xxxxxxxx
-	1.	DOCKER_IMAGE_ID : Docker image name AND docker repository name.
-	1.	DOCKER_USER_ID : Username of your docker account
+	1.	**FILE_SSH_KEY_NAME** : File name of your AWS SSH key **on your disk**.
+	1.	**AWS_SSH_KEY_NAME** : Name of your **AWS SSH key**.
+	1.	**AWS_SUBNET_ID** : Id of the subnet in AWS. Like subnet-xxxxxxxx
+	1.	**AWS_SECURITYGROUP_ID** : id of the security group in AWS. Like sg-xxxxxxxx
+	1.	**DOCKER_IMAGE_ID** : Docker image name **AND docker repository name**.
+	1.	**DOCKER_USER_ID** : Username of your docker account
 1.	Run the AUTO_INSTALL.sh script within a console:
-	1.	Use "./AUTO_INSTALL.sh -cf" for a full flow and deploy in AWS Cloud
-	1.	Use "./AUTO_INSTALL.sh" for a full flow  and deploy in your computer
-	1.	Use "./AUTO_INSTALL.sh --help" for more information
+	1.	Use **"./AUTO_INSTALL.sh -cf"** for a full flow and deploy in **AWS Cloud**
+	1.	Use **"./AUTO_INSTALL.sh"** for a full flow  and deploy in your computer
+	1.	Use **"./AUTO_INSTALL.sh --help"** for more information
 
